@@ -1,0 +1,6 @@
+{
+  "interval": 300,
+  "backend_domain": "dpidetect.org",
+  "get_geo_url": "https://geo.dpidetect.org/get-iso/plain",
+  "get_ip_url": "https://geo.dpidetect.org/get-ip/plain"
+}
