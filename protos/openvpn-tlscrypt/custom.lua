@@ -26,6 +26,9 @@ _C.connect = function(server)
   local meta_r = req{
     url = ("https://%s:%d/%s"):format(server.domain, server.port, _C.proto),
     headers = _G.headers,
+    timeout = 10,
+    connect_timeout = 10,
+    retries = 5,
   }
   log.debug"===== Завершено ====="
 
@@ -46,8 +49,6 @@ _C.connect = function(server)
     end
   end
   log.debug"===== Завершено ====="
-
-  local fd
 
   log.debug"===== Чтение шаблона конфигурации ====="
   local cfg_tpl = read(("%s.template"):format(cfg_path))
@@ -150,6 +151,9 @@ _C.checker = function(server)
   local res = req{
     url = ("http://%s:%d/"):format(server.meta.test_host, server.meta.test_port),
     interface = _C.interface_name,
+    timeout = 10,
+    connect_timeout = 10,
+    retries = 2,
   }
   local ret = check(res, server.meta.server_ip)
   log.debug"==== Выход из функции проверки доступности ===="

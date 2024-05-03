@@ -417,7 +417,7 @@ function _U.req(t)
         _U.sleep(3)
         ret = r(t)
         if failed(ret) then fails=fails+1 end
-      until fails>=retries or not(failed(ret))
+      until fails > retries or not(failed(ret))
       if failed(ret) then
         l.bad"Попытки получения ответа исчерпаны. Ответ получить не удалось"
       end
