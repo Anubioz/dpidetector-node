@@ -6,7 +6,7 @@ PARALLEL="${PARALLEL:+--parallel ${PARALLEL}}"
 
 checkutil docker || die "Не получается найти утилиту 'docker' (без неё невозможно запустить данное ПО)"
 
-function build() {
+function dkrup() {
   case "${1}" in
     plugin)
       compose=("docker" "compose" "${PARALLEL}")
@@ -19,10 +19,9 @@ function build() {
   esac
   if ! ${compose[*]} pull; then # --quiet
     nonfatal die "Обновление из готовых образов не удалось (см. ошибку выше)."
-    if [[ -z "${DPIDETECTOR_NO_BUILD}" ]]; then
+    if [[ -n "${DPIDETECTOR_FORCE_BUILD}" ]]; then
       nonfatal die "Будет произведена локальная сборка контейнеров" \
         "(однако, пожалуйста, сообщите о случившемся в чат)"
-      (is_on_tag && current_tag || echo "v0.0.0") > VERSION
       ${compose[*]} build --pull --no-cache || die "Сборка провалилась"
     else
       die "Пожалуйста, напишите об этом в чат!"
@@ -31,8 +30,10 @@ function build() {
   ${compose[*]} up ${up_args[*]} --remove-orphans --detach --force-recreate
 }
 
+save_version $(released_verion)
+
 if [[ -f /usr/libexec/docker/cli-plugins/docker-compose ]]; then
-  build plugin
+  dkrup plugin
 else
   nonfatal die "Не обнаружен Compose V2 (плагин для docker)."
   nonfatal die "Будет произведена попытка использовать устаревший docker-compose."
@@ -40,5 +41,6 @@ else
   checkutil docker-compose || die "Не получается найти ни плагин compose для docker, ни утилиту 'docker-compose'" \
     "(без хотя бы одного из них невозможно запустить данное ПО)"
 
-  build old
+  dkrup old
 fi
+finish

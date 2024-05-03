@@ -37,3 +37,4 @@ fi
 
 wait_for_conf
 bash update.bash
+finish

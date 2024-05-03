@@ -9,32 +9,26 @@ lock do
 
 if [[ -d "${PWD}/.git" ]]; then
   checkutil git || die "Не удалось найти утилиту 'git' (она нужна для скачивания обновлений)"
-  checkutil sed || die "Не удалось найти утилиту 'sed'"
 
   released_verion=$(released_version)
-  current_tag=$(current_tag)
+  current_version=$(current_version)
+  main_branch=dev
 
-  if ! (is_detached && is_on_tag); then
-    current_version=0.0.0
+  git fetch --quiet --force &>/dev/null
+  if [[ $(current_branch) == "${main_branch}" ]]; then
+    git pull &>/dev/null || die "Не получилось обновить код"
   else
-    current_version="${current_tag##v}"
+    git checkout ${main_branch} &>/dev/null || die "Не получилось перключиться на основную ветку"
   fi
-  if ver_lt "${current_version##v}" "${released_verion##v}"; then
-    git fetch --quiet --tags --force --prune --prune-tags &>/dev/null
-    # TODO: ☝️ проверить что все из этих опций совместимы со старьём типа 1.8.3.1 (Centos7?)
 
-    if git checkout --quiet --force "${released_verion}"; then
-      lock undo
-      bash start.bash
-    else
-      die "Не получилось обновить слепок кода. Пожалуйста, обратитесь в чат!"
-    fi
+  if ver_lt "${current_version##v}" "${released_verion##v}"; then
+    bash start.bash
   fi
-  lock undo
 else
-  lock undo
   echo "Кажется, Вы установили данное ПО не по инструкции (скачав git-репозиторий), а из архива"
   echo "Работоспособность обновления при данном способе не гарантируется, но, всё же, попробуем обновить"
 
+  lock undo
   bash install.bash
 fi
+finish

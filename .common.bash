@@ -134,13 +134,31 @@ function released_version() {
 
 function current_branch() {
   checkutil git || die "Не удалось найти утилиту 'git'"
-  git branch | grep '^\*'
+  checkutil grep || die "Не удалось найти утилиту 'grep'"
+  checkutil cut || die "Не удалось найти утилиту 'cut'"
+  git branch | grep '^\*' | cut -d ' ' -f 2-99
 }
 
 function current_tag() {
   checkutil git || die "Не удалось найти утилиту 'git'"
   local at_ref=$(git describe --tags --always)
   [[ "${at_ref}" =~ ^v[0-9]*\.[0-9]*\.[0-9]*$ ]] && echo -n "${at_ref}"
+}
+
+function current_version() {
+  local ver
+  if [[ -f "${PWD}"/VERSION ]]; then
+    ver=$(cat "${PWD}"/VERSION)
+    if [[ -z "${ver}" || ! "${ver}" =~ v[0-9]*\.[0-9]*\.[0-9]*$ ]]; then
+      ver="0.0.0"
+    fi
+  else
+    ver="0.0.0"
+  fi
+}
+
+function save_version() {
+  echo "${1}" > "${PWD}"/VERSION
 }
 
 function is_on_tag() {
@@ -151,6 +169,11 @@ function is_detached() {
   # checkutil git || die "Не удалось найти утилиту 'git'"
   # [[ HEAD == $(git rev-parse --abbrev-ref --symbolic-full-name HEAD) ]]
   [[ -z $(current_branch | grep -q detached) ]]
+}
+
+function finish() {
+  lock undo
+  #exit 0
 }
 
 ### /Functions }}}
