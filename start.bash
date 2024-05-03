@@ -30,7 +30,7 @@ function dkrup() {
   ${compose[*]} up ${up_args[*]} --remove-orphans --detach --force-recreate
 }
 
-save_version $(released_verion)
+save_version $(released_version)
 
 if [[ -f /usr/libexec/docker/cli-plugins/docker-compose ]]; then
   dkrup plugin
