@@ -79,12 +79,6 @@ function lock() {
   esac
 }
 
-function already_run() {
-  checkutil pgrep || die "Не удалось найти 'pgrep'"
-  local what="${1:-${0}}"
-  [[ $(pgrep -f -x "${what}" | wc -l) -gt 1 ]]
-}
-
 function ver_min() {
   checkutil head || die "Не удалось найти утилиту 'head'"
   checkutil sort || die "Не удалось найти утилиту 'sort'"
