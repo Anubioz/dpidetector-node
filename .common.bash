@@ -82,21 +82,21 @@ function lock() {
 function already_run() {
   checkutil pgrep || die "Не удалось найти 'pgrep'"
   local what="${1:-${0}}"
-  [[ $(pgrep -c -f "${what}") -gt 1 ]]
+  [[ $(pgrep -f "${what}" | wc -l) -gt 1 ]]
 }
 
 function ver_min() {
   checkutil head || die "Не удалось найти утилиту 'head'"
   checkutil sort || die "Не удалось найти утилиту 'sort'"
-  echo 1.1.1 | sort --version-sort &>/dev/null || die "Не поддерживаемая (устаревшая?) версия sort"
-  sort --version-sort | head -n 1
+  echo 1.1.1 | sort -V &>/dev/null || die "Не поддерживаемая (устаревшая?) версия sort"
+  sort -V | head -n 1
 }
 
 function ver_max() {
   checkutil head || die "Не удалось найти утилиту 'head'"
   checkutil sort || die "Не удалось найти утилиту 'sort'"
-  echo 1.1.1 | sort --version-sort &>/dev/null || die "Не поддерживаемая (устаревшая?) версия sort"
-  sort --version-sort --reverse | head -n 1
+  echo 1.1.1 | sort -V &>/dev/null || die "Не поддерживаемая (устаревшая?) версия sort"
+  sort -V --reverse | head -n 1
 }
 
 function ver_lte() {
@@ -140,7 +140,7 @@ function released_version() {
 
 function current_branch() {
   checkutil git || die "Не удалось найти утилиту 'git'"
-  git branch --show-current
+  git branch | grep '^\*'
 }
 
 function current_tag() {
@@ -156,7 +156,7 @@ function is_on_tag() {
 function is_detached() {
   # checkutil git || die "Не удалось найти утилиту 'git'"
   # [[ HEAD == $(git rev-parse --abbrev-ref --symbolic-full-name HEAD) ]]
-  [[ -z $(current_branch) ]]
+  [[ -z $(current_branch | grep -q detached) ]]
 }
 
 ### /Functions }}}
