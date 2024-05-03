@@ -155,10 +155,11 @@ function current_version() {
   else
     ver="0.0.0"
   fi
+  echo -n "${ver}"
 }
 
 function save_version() {
-  echo "${1}" > "${PWD}"/VERSION
+  echo -n "${1}" > "${PWD}"/VERSION
 }
 
 function is_on_tag() {
