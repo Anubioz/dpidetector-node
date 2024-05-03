@@ -96,7 +96,7 @@ function ver_max() {
   checkutil head || die "Не удалось найти утилиту 'head'"
   checkutil sort || die "Не удалось найти утилиту 'sort'"
   echo 1.1.1 | sort -V &>/dev/null || die "Не поддерживаемая (устаревшая?) версия sort"
-  sort -V --reverse | head -n 1
+  sort -V -r | head -n 1
 }
 
 function ver_lte() {
