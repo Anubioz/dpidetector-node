@@ -19,6 +19,7 @@ if [[ -d "${PWD}/.git" ]]; then
     git pull &>/dev/null || die "Не получилось обновить код"
   else
     git checkout ${main_branch} &>/dev/null || die "Не получилось перключиться на основную ветку"
+    git pull &>/dev/null || die "Не получилось обновить код"
   fi
 
   if ver_lt "${current_version##v}" "${released_verion##v}"; then
